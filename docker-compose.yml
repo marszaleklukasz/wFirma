@@ -16,4 +16,22 @@ services:
     composer:
         extends:
             service: src
-        command: composer install -o -n
+        command: composer update -o -n
+
+    src7:
+        build : ./docker/php7
+        volumes:
+            - .:/var/www/html
+            - ./docker/php/config:/usr/local/etc/php/conf.d
+            - ~/.composer:/root/.composer
+        working_dir: /var/www/html
+
+    phpunit7:
+        extends:
+          service: src7
+        command: ./vendor/bin/phpunit
+
+    composer7:
+        extends:
+            service: src7
+        command: composer update -o -n

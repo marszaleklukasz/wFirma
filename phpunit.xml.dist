@@ -15,6 +15,7 @@
         <env name="wFirma.username" value=""/>
         <env name="wFirma.password" value=""/>
         <env name="wFirma.company_id" value=""/> <!-- optional -->
+        <env name="wFirma.log_to_stdout" value="0"/> <!-- set to "1" to see input / output of requests -->
     </php>
 
     <testsuites>

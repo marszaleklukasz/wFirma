@@ -6,7 +6,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Webit\WFirmaSDK\AbstractTestCase;
 use Webit\WFirmaSDK\Auth\BasicAuth;
-use Webit\WFirmaSDK\Auth\CompanyId;
 use Webit\WFirmaSDK\Entity\Infrastructure\Buzz\BuzzRequestExecutorFactory;
 
 abstract class AbstractApiTestCase extends AbstractTestCase
@@ -20,13 +19,9 @@ abstract class AbstractApiTestCase extends AbstractTestCase
             $factory = new EntityApiFactory(
                 new BuzzRequestExecutorFactory(
                     null,
-                    null
-//                    new Logger(
-//                        'API',
-//                        array(
-//                            new StreamHandler('php://stdout')
-//                        )
-//                    )
+                    null,
+                    $this->logger()
+
                 )
             );
         } catch (\Exception $e) {
@@ -47,13 +42,28 @@ abstract class AbstractApiTestCase extends AbstractTestCase
     }
 
     /**
-     * @return null|CompanyId
+     * @return null|int
      */
     private function companyId()
     {
         $id = getenv('wFirma.company_id');
         if ($id) {
-            return new CompanyId($id);
+            return (int)$id;
+        }
+
+        return null;
+    }
+
+    private function logger()
+    {
+        $logToStdOut = getenv('wFirma.log_to_stdout') == 1;
+        if ($logToStdOut) {
+            return new Logger(
+                'API',
+                array(
+                    new StreamHandler('php://stdout')
+                )
+            );
         }
 
         return null;

@@ -4,6 +4,7 @@ namespace Webit\WFirmaSDK\Entity\Infrastructure\Buzz;
 
 use Buzz\Browser;
 use Buzz\Client\Curl;
+use Buzz\Middleware\BasicAuthMiddleware;
 use Webit\WFirmaSDK\Auth\BasicAuth;
 
 class BrowserFactory
@@ -30,16 +31,13 @@ class BrowserFactory
      */
     public function create(BasicAuth $auth)
     {
-        $browser = new Browser($client = new Curl());
-        foreach ($this->curlOptions as $option => $value) {
-            $client->setOption($option, $value);
-        }
+        $browser = new Browser($client = new Curl($this->curlOptions));
 
-        $browser->addListener(new BaseUrlListener($this->baseUrl));
-        $browser->addListener(new BasicAuthListener($auth));
+        $browser->addMiddleware(new BaseUrlMiddleware($this->baseUrl));
+        $browser->addMiddleware(new BasicAuthMiddleware($auth->username(), $auth->password()));
 
         if ($companyId = $auth->companyId()) {
-            $browser->addListener(new CompanyIdListener($companyId));
+            $browser->addMiddleware(new CompanyIdMiddleware($companyId));
         }
 
         return $browser;

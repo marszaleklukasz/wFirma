@@ -43,7 +43,7 @@ class BasicAuthTest extends AbstractTestCase
         );
 
         $this->assertEquals(
-            sprintf('Authorization: Basic %s', base64_encode(sprintf('%s:%s', $user, $password))),
+            sprintf('Basic %s', base64_encode(sprintf('%s:%s', $user, $password))),
             $auth->toHttpHeader()
         );
     }

@@ -63,7 +63,7 @@ final class BasicAuth
     public function toHttpHeader()
     {
         return sprintf(
-            'Authorization: Basic %s',
+            'Basic %s',
             base64_encode(
                 sprintf('%s:%s', $this->username, $this->password)
             )

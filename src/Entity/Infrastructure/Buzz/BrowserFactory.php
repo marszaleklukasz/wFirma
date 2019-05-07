@@ -31,7 +31,9 @@ final class BrowserFactory
      */
     public function create(BasicAuth $auth)
     {
-        $browser = new Browser($client = new Curl());
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+        
+        $browser = new Browser($client = new Curl($psr17Factory), $psr17Factory);
         foreach ($this->curlOptions as $option => $value) {
             $client->setOption($option, $value);
         }

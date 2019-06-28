@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Webit\WFirmaSDK\Entity\Infrastructure\BasicAuthBasedRequestExecutorFactory;
 use Webit\WFirmaSDK\Entity\Infrastructure\Serialiser\ApiSerialiserFactory;
 use Webit\WFirmaSDK\Auth\BasicAuth;
+use Webit\WFirmaSDK\Auth\OauthAuth;
 
 final class BuzzRequestExecutorFactory implements BasicAuthBasedRequestExecutorFactory
 {
@@ -36,6 +37,19 @@ final class BuzzRequestExecutorFactory implements BasicAuthBasedRequestExecutorF
     {
         return new BuzzRequestExecutor(
             $this->browserFactory->create($basicAuth),
+            $this->apiSerialiserFactory->create(),
+            $this->logger
+        );
+    }
+
+    /**
+     * @param BasicAuth $basicAuth
+     * @return BuzzRequestExecutor
+     */
+    public function createOauth(OauthAuth $oauth)
+    {
+        return new BuzzRequestExecutor(
+            $this->browserFactory->createOauth($oauth),
             $this->apiSerialiserFactory->create(),
             $this->logger
         );

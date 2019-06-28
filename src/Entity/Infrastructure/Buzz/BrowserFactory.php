@@ -6,6 +6,7 @@ use Buzz\Browser;
 use Buzz\Client\Curl;
 use Buzz\Middleware\BasicAuthMiddleware;
 use Webit\WFirmaSDK\Auth\BasicAuth;
+use Webit\WFirmaSDK\Auth\OauthAuth;
 
 final class BrowserFactory
 {
@@ -47,4 +48,27 @@ final class BrowserFactory
 
         return $browser;
     }
+    
+    /**
+     * @param OauthAuth $auth
+     * @return Browser
+     */
+    public function createOauth(OauthAuth $auth)
+    {
+        $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+        $browser = new Browser($client = new Curl($psr17Factory), $psr17Factory);
+        foreach ($this->curlOptions as $option => $value) {
+            $client->setOption($option, $value);
+        }
+
+        $browser->addMiddleware(new BaseUrlMiddleware($this->baseUrl));
+        $browser->addMiddleware(new BasicOauthMiddleware($auth->oauthConsumerKey(), $auth->oauthToken(), $auth->oauthSignature(), $auth->oauthSignatureMethod()));
+
+        if ($companyId = $auth->companyId()) {
+            $browser->addMiddleware(new CompanyIdMiddleware($companyId));
+        }
+
+        return $browser;
+    }    
 }
